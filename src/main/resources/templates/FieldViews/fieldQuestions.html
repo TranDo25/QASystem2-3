@@ -1,0 +1,334 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>test page &amp; Build Careers</title>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="shortcut icon"
+	href="https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico?v=ec617d715196">
+<link rel="apple-touch-icon"
+	href="https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png?v=c78bd457575a">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+<link rel="image_src"
+	href="https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png?v=c78bd457575a">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+	integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+	crossorigin="anonymous" />
+<link rel="stylesheet" href="./assets/css/main.css">
+</head>
+
+<body>
+	<header>
+		<div class="nav-container">
+			<nav>
+				<div class="nav-brand">
+					<a href="/" class="nav-icon"> <i class="fab fa-stack-overflow"></i>
+						<div class="nav-icon-text">
+							System <span class="nav-bold-text">Question</span>
+						</div>
+					</a>
+				</div>
+				<div class="nav-base-links">
+					<ul>
+						<li><a href="#">About</a></li>
+						<li><a href="#">Products</a></li>
+						<li><a href="#">For Teams</a></li>
+					</ul>
+				</div>
+				<div class="nav-search">
+					<div class="search-container">
+						<i class="fas fa-search"></i> <input type="text" name="search"
+							placeholder="Search...">
+					</div>
+					<div class="search-hints">
+						<div class="search-arrow-up"></div>
+						<div class="search-hint-body">
+							<div class="hints-grid-column">
+								<div class="hint-text">
+									<span>[tag] </span> search within a tag
+								</div>
+								<div class="hint-text">
+									<span>user:1234 </span> search by author
+								</div>
+								<div class="hint-text">
+									<span>"words here"</span> exact phrase
+								</div>
+							</div>
+							<div class="hints-grid-column">
+								<div class="hint-text">
+									<span>answers:0</span> unanswered questions
+								</div>
+								<div class="hint-text">
+									<span> score:3 </span> posts with a 3+ score
+								</div>
+								<div class="hint-text">
+									<span>isaccepted:yes </span> search within status
+								</div>
+							</div>
+						</div>
+						<div class="search-hint-footer">
+							<a href="#" class="btn">Ask a question</a> <a href="#"
+								class="search-help">Search help</a>
+						</div>
+					</div>
+				</div>
+				<div class="nav-right-buttons">
+					<div class="search-btn">
+						<i class="fas fa-search"></i>
+					</div>
+					<span th:if="${user == null}">
+						<a th:href="@{/register}" class="btn btn-register">Sign up</a>
+						<a th:href="@{/loginProcess}" class="btn btn-login">Log in</a> 
+					</span> 
+					<span th:unless="${user == null}">
+						<span>
+							<span th:text="'Login as '+${user.name}" />
+							<a th:href="@{/logoutProcess}" class="btn btn-login">Log out</a>
+						</span>
+					</span>
+				</div>
+			</nav>
+		</div>
+	</header>
+	<div class="wrapper">
+		<div class="container">
+			<div class="box left">
+				<div class="w3-sidebar w3-bar-block w3-light-grey w3-card"
+					style="width: 160px;">
+					<a href="/" class="w3-bar-item w3-button">Home</a>
+					<div class="w3-button">
+						<a th:href="@{/fields}" class="w3-bar-item w3-button"> <i
+							class="fa-solid fa-earth-americas"></i> List Fields
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="box content">
+				<div class="first-title">
+					<div class="hang-1">
+						<div>
+							<h1 class="top-question" th:text="'Field '+${field.name}"></h1>
+						</div>
+						<div>
+							<form method="post" th:action="@{/field/addQuestion}" >
+								<input type="hidden" name="idField" th:value="${field.id}"/>
+								<span>Title:
+									<input type="text" name="title" />
+								</span>
+								<span>Content:
+									<input type="text" name="content" />
+								</span>
+								<input type="submit" class="ask-question">Ask Questions</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="second-row" th:each="question:${field.questions}">
+					<div class="number-title">
+						<div class="number-label red-color"
+							th:text="${question.point}+' point' "></div>
+						<div class="number-label blue-color"
+							th:text="${question.answers.size}+' answers' "></div>
+					</div>
+					<div class="question">
+						<div class="cach-le">
+							<b><a th:href="@{'/questions/' + ${question.id}}" th:text="${question.title}" /></b>
+						</div>
+						<div class="author-time cach-le">
+							<div>
+								<a class="dinh-dang-dong-cuoi" href="#"> <b
+									th:text="'by '+${question.user.name}"></b>
+								</a>
+							</div>
+							<div>
+								<a class="dinh-dang-dong-cuoi"
+									th:text="${question.answers.size}+' point'"></a>
+							</div>
+							<div>
+								<a class="dinh-dang-dong-cuoi" th:text="'for '+${question.createAt}"></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="box right">
+				<div class="component-block">
+					<div class="small-component-block">
+						<div>
+							<div class="smaill-component-title">
+								<b>The Overflow Blogs</b>
+							</div>
+							<div class="small-component-content">
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="small-component-block">
+						<div>
+							<div class="smaill-component-title">
+								<b>The Overflow Blogs</b>
+							</div>
+							<div class="small-component-content">
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="component-block">
+					<div class="small-component-block">
+						<div>
+							<div class="smaill-component-title">
+								<b>The Overflow Blogs</b>
+							</div>
+							<div class="small-component-content">
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="small-component-block">
+						<div>
+							<div class="smaill-component-title">
+								<b>The Overflow Blogs</b>
+							</div>
+							<div class="small-component-content">
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="component-block">
+					<div class="small-component-block">
+						<div>
+							<div class="smaill-component-title">
+								<b>The Overflow Blogs</b>
+							</div>
+							<div class="small-component-content">
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="small-component-block">
+						<div>
+							<div class="smaill-component-title">
+								<b>The Overflow Blogs</b>
+							</div>
+							<div class="small-component-content">
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+								<div class="single-line">
+									<i class="fa-solid fa-pen add-padding"></i> Crystal balls and
+									clairvoyance: Future proofing in a world of inevitable change
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+
+		</div>
+	</div>
+	</div>
+	</footer>
+
+	<script src="./assets/js/main.js"></script>
+	<script>
+        function myAccFunc() {
+            var x = document.getElementById("demoAcc");
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-green";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+                x.previousElementSibling.className =
+                    x.previousElementSibling.className.replace(" w3-green", "");
+            }
+        }
+
+        function myDropFunc() {
+            var x = document.getElementById("demoDrop");
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-green";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+                x.previousElementSibling.className =
+                    x.previousElementSibling.className.replace(" w3-green", "");
+            }
+        }
+    </script>
+
+</body>
+
+</html>

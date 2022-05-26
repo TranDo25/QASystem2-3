@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<div><b th:text="${question.title}" /></div>
+	<div th:text="${question.content}"></div>
+	<div>-----------------------------------------------</div>
+	<div>Know someone who can answer? Your Answer</div>
+	<form method="post" th:action="@{/questions/answer}" th:object="${question}">
+		<input type="hidden" name="idQuestion" th:value="${question.id}" />
+		<input type="text" name="content"/>
+		<input type="submit" value="Post Answer" />
+	</form>
+	<div th:each="answer:${question.answers}">
+		<div th:text="${answer.content}+'by '+${answer.user.name}" >
+		</div>
+		<div th:text="'Point '+${answer.point}"></div>
+		<div th:text="'Create At '+${answer.createAt}"></div>
+		<div th:text="'Update At '+${answer.updateAt}"></div>
+	</div>
+</body>
+</html>
