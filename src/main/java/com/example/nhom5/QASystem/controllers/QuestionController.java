@@ -1,6 +1,11 @@
 package com.example.nhom5.QASystem.controllers;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.nhom5.QASystem.entities.Answer;
 import com.example.nhom5.QASystem.entities.Question;
@@ -22,40 +28,53 @@ import com.example.nhom5.QASystem.services.UserService;
 public class QuestionController {
 	private QuestionService questionService;
 	private UserService userService;
+
 	@Autowired
 	public QuestionController(QuestionService questionService, UserService userService) {
-		this.questionService=questionService;
-		this.userService=userService;
+		this.questionService = questionService;
+		this.userService = userService;
 	}
-	
+
 	@PostMapping("/save")
 	public String saveQuestion(@ModelAttribute("question") Question question) {
 		questionService.saveQuestion(question);
 		return "";
 	}
-	
+
+	@GetMapping("/list")
+	public String viewQuestions(Model model, @RequestParam("field") Optional<String> field) {
+		//nếu trường field rỗng, thực hiện lấy danh sách bình thường, thay điều kiện sắp xếp là title
+		//nếu trường field không rỗng, thực hiện chỉ lấy danh sách 10 đối tượng, viết hàm lấy trong repository
+		//lấy ra danh sách 10 đối tượng đã được sắp xếp sẵn, không sử dụng sort nữa, sort vẫn giữ nguyên khi không có điều kiện sắp xếp
+		Sort sort = Sort.by(Direction.ASC, field.orElse("title"));// nếu trường field rỗng thì mặc định xếp theo title
+		List<Question> ls = questionService.findAll(sort);
+		model.addAttribute("questions", ls);
+		return "./HomeViews/home";
+	}
+   
 	@GetMapping("/{id}")
 	public String detailQuestion(@PathVariable("id") int id, Model model) {
-		Question question=questionService.getQuestionById(id);
+		Question question = questionService.getQuestionById(id);
 		model.addAttribute("question", question);
 		return "./QuestionViews/detailQuestion";
 	}
+
 	@PostMapping("/answer")
-	public String commentQuestion(@RequestParam("idQuestion") int idQuestion, @RequestParam("content") String content, @CookieValue(value="userId", defaultValue="-1") int userId) {
+	public String commentQuestion(@RequestParam("idQuestion") int idQuestion, @RequestParam("content") String content,
+			@CookieValue(value = "userId", defaultValue = "-1") int userId) {
 		User user;
-		if(userId==-1) {
+		if (userId == -1) {
 			return "redirect:/loginProcess";
-		}
-		else {
-			Question question=questionService.getQuestionById(idQuestion);
-			Answer answer=new Answer();
+		} else {
+			Question question = questionService.getQuestionById(idQuestion);
+			Answer answer = new Answer();
 			answer.setContent(content);
 			answer.setUser(userService.get(userId));
 			answer.setQuestion(question);
 			answer.setPoint(0);
 			question.addAnswer(answer);
 			this.questionService.saveQuestion(question);
-			return "redirect:/questions/"+question.getId();
+			return "redirect:/questions/" + question.getId();
 		}
 	}
 }

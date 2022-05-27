@@ -23,43 +23,50 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table
 @NoArgsConstructor
-public class Question {
-	
+public class Question{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	private String title;
-	
+
 	private String content;
-	
+
 	private Integer point;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "field_id")
 	private Field field;
-	
+
 	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	private List<Answer> answers = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	private List<QuestionComment> comments = new ArrayList<>();
 	private Date createAt;
 	private Date updateAt;
+
 	@PrePersist
 	void createdAt() {
 		this.createAt = new Date();
 		this.updateAt = new Date();
 	}
+
 	@PreUpdate
 	void updateAt() {
-		this.updateAt=new Date();
+		this.updateAt = new Date();
 	}
+
 	public void addAnswer(Answer answer) {
 		this.answers.add(answer);
+	}
+
+	public String toString() {
+		return id + " " + title + " " + content;
 	}
 }
