@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +35,7 @@ public class User {
 	private String position;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//	@Cascade(value= {org.hibernate.annotations.CascadeType.ALL})
 	private List<Question> questions = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

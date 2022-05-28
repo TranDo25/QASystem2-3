@@ -35,9 +35,9 @@ public class QuestionService {
 
 	public ArrayList<Question> newQuestion() {
 		ArrayList<Question> list = rep.findAllByOrderByCreateAtDesc();
-		if (list.size() > 10) {
-			list = (ArrayList<Question>) list.subList(0, 10);
-		}
+//		if (list.size() > 10) {
+//			list = (ArrayList<Question>) list.subList(0, 10);
+//		}
 		return list;
 	}
 
@@ -77,8 +77,20 @@ public class QuestionService {
 		rep.delete(entity);
 	}
 
+	public List<Question> list10Question() {
+		return rep.list10Question();
+	}
+
 	public void deleteAllById(List<Integer> ids) {
 		rep.deleteAllById(ids);
+	}
+
+	public ArrayList<Question> listQuestionByTopField() {
+		return rep.listQuestionByTopField();
+	}
+
+	public ArrayList<Question> listQuestionByTopUser() {
+		return rep.listQuestionByTopUser();
 	}
 
 	public void deleteAll() {

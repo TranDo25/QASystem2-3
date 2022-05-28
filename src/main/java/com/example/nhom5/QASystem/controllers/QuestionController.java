@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.example.nhom5.QASystem.entities.Answer;
 import com.example.nhom5.QASystem.entities.Question;
 import com.example.nhom5.QASystem.entities.User;
+import com.example.nhom5.QASystem.services.FieldService;
 import com.example.nhom5.QASystem.services.QuestionService;
 import com.example.nhom5.QASystem.services.UserService;
 
@@ -28,6 +29,8 @@ import com.example.nhom5.QASystem.services.UserService;
 public class QuestionController {
 	private QuestionService questionService;
 	private UserService userService;
+	@Autowired
+	FieldService fieldService;
 
 	@Autowired
 	public QuestionController(QuestionService questionService, UserService userService) {
@@ -42,16 +45,45 @@ public class QuestionController {
 	}
 
 	@GetMapping("/list")
-	public String viewQuestions(Model model, @RequestParam("field") Optional<String> field) {
-		//nếu trường field rỗng, thực hiện lấy danh sách bình thường, thay điều kiện sắp xếp là title
-		//nếu trường field không rỗng, thực hiện chỉ lấy danh sách 10 đối tượng, viết hàm lấy trong repository
-		//lấy ra danh sách 10 đối tượng đã được sắp xếp sẵn, không sử dụng sort nữa, sort vẫn giữ nguyên khi không có điều kiện sắp xếp
-		Sort sort = Sort.by(Direction.ASC, field.orElse("title"));// nếu trường field rỗng thì mặc định xếp theo title
-		List<Question> ls = questionService.findAll(sort);
-		model.addAttribute("questions", ls);
+	public String viewQuestions(Model model, @RequestParam("field") Optional<String> field,
+			@RequestParam("field2") Optional<String> field2) {
+		// nếu trường field rỗng, thực hiện lấy danh sách bình thường, thay điều kiện
+		// sắp xếp là title
+		// nếu trường field không rỗng, thực hiện chỉ lấy danh sách 10 đối tượng, viết
+		// hàm lấy trong repository
+		// lấy ra danh sách 10 đối tượng đã được sắp xếp sẵn, không sử dụng sort nữa,
+		// sort vẫn giữ nguyên khi không có điều kiện sắp xếp
+		if (field2.isPresent()) {
+			model.addAttribute("condition", true);
+			// title
+			if (field2.get().equals("topquestion")) {
+				List<Question> ls = questionService.list10Question();
+				model.addAttribute("questions", ls);
+				model.addAttribute("field2", "topquestion");
+			} else if (field2.get().equals("topfield")) {
+				List<Question> ls = questionService.listQuestionByTopField();
+				model.addAttribute("questions", ls);
+				model.addAttribute("field2", "topfield");
+			}
+			else if (field2.get().equals("topuser")) {
+				List<Question> ls = questionService.listQuestionByTopUser();
+				model.addAttribute("questions", ls);
+				model.addAttribute("field2", "topuser");
+			}
+		}
+
+		// bên dưới là điều kiện mặc định, trường field có giá trị hoặc không có giá trị
+		else {
+			Sort sort = Sort.by(Direction.ASC, field.orElse("title"));// nếu trường field rỗng thì mặc định xếp theo
+																		// title
+			List<Question> ls = questionService.findAll(sort);
+			model.addAttribute("questions", ls);
+			model.addAttribute("condition", false);
+		}
+
 		return "./HomeViews/home";
 	}
-   
+
 	@GetMapping("/{id}")
 	public String detailQuestion(@PathVariable("id") int id, Model model) {
 		Question question = questionService.getQuestionById(id);
